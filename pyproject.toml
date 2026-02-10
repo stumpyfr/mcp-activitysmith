@@ -1,0 +1,20 @@
+[project]
+name = "mcp-activitysmith"
+version = "0.1.0"
+description = "A MCP Server to send notifications and live activities to iOS devices using ActivitySmith"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "activitysmith>=0.1.1",
+    "fastmcp>=2.14.5",
+]
+
+[build-system]
+requires = ["hatchling>=1.26.3"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["mcp_activitysmith"]
+
+[project.scripts]
+mcp-activitysmith = "mcp_activitysmith.cli:main"
