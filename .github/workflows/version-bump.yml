@@ -38,7 +38,7 @@ jobs:
         env:
           BUMP: ${{ inputs.bump }}
         run: |
-          new_version=$(uv version --bump "$BUMP" --short --no-sync --frozen)
+          new_version=$(uv version --bump "$BUMP" --short --no-sync)
           echo "version=${new_version}" >> "$GITHUB_OUTPUT"
 
       - name: Commit and tag
