@@ -23,20 +23,36 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Read version
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Resolve version
         id: version
         run: |
-          python - <<'PY'
+          set -euo pipefail
+
+          if [[ "${GITHUB_REF_TYPE:-}" == "tag" ]]; then
+            version="${GITHUB_REF_NAME#v}"
+          else
+            version=$(python - <<'PY'
           import tomllib
 
           with open('pyproject.toml', 'rb') as handle:
               data = tomllib.load(handle)
 
-          version = data['project']['version']
-          print(f'version={version}')
-          with open('$GITHUB_OUTPUT', 'a') as output:
-              output.write(f'version={version}\n')
+          print(data['project']['version'])
           PY
+            )
+          fi
+
+          if [[ -z "$version" ]]; then
+            echo "Version is empty" >&2
+            exit 1
+          fi
+
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
