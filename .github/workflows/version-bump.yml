@@ -41,9 +41,13 @@ jobs:
           new_version=$(uv version --bump "$BUMP" --short --no-sync)
           echo "version=${new_version}" >> "$GITHUB_OUTPUT"
 
+      - name: Update lockfile
+        run: |
+          uv lock
+
       - name: Commit and tag
         run: |
-          git add pyproject.toml
+          git add pyproject.toml uv.lock
           git commit -m "Bump version to ${{ steps.bump.outputs.version }}"
           git tag "v${{ steps.bump.outputs.version }}"
 
