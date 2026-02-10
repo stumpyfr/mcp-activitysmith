@@ -4,6 +4,9 @@ on:
   push:
     tags:
       - "v*"
+  workflow_run:
+    workflows: ["Bump Version"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -17,6 +20,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read version
+        id: version
+        run: |
+          python - <<'PY'
+          import tomllib
+
+          with open('pyproject.toml', 'rb') as handle:
+              data = tomllib.load(handle)
+
+          version = data['project']['version']
+          print(f'version={version}')
+          with open('$GITHUB_OUTPUT', 'a') as output:
+              output.write(f'version={version}\n')
+          PY
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -32,7 +52,7 @@ jobs:
           images: ghcr.io/${{ github.repository }}
           tags: |
             type=raw,value=latest
-            type=ref,event=tag
+            type=raw,value=${{ steps.version.outputs.version }}
 
       - name: Build and push
         uses: docker/build-push-action@v6
