@@ -44,6 +44,26 @@ Example mcp.json with input prompt (VS Code):
 }
 ```
 
+Example mcp.json using Docker (stdio, latest image):
+
+```json
+{
+	"mcpServers": {
+		"activitysmith": {
+			"command": "docker",
+			"args": [
+				"run",
+				"--rm",
+				"-i",
+				"-e",
+				"API_KEY=your_key_here",
+				"ghcr.io/stumpyfr/mcp-activitysmith:latest"
+			]
+		}
+	}
+}
+```
+
 ### MCP Client Config (HTTP)
 
 Example mcp.json:
